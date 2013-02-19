@@ -2,18 +2,22 @@ package com.trevorbernard.disruptor.examples;
 
 import com.lmax.disruptor.EventFactory;
 
+/**
+ * WARNING this is a mutable object which will be recycled the ringbuffer. 
+ * You must take a copy of data it holds before the framework recycles it.  
+ */
 public final class ValueEvent {
-    private long value;
+    private String value;
 
-    public long getValue() {
-        return value;
-    }
+    public String getValue() {
+		return value;
+	}
 
-    public void setValue(final long value) {
-        this.value = value;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public final static EventFactory<ValueEvent> EVENT_FACTORY = new EventFactory<ValueEvent>() {
+	public final static EventFactory<ValueEvent> EVENT_FACTORY = new EventFactory<ValueEvent>() {
         public ValueEvent newInstance() {
             return new ValueEvent();
         }
