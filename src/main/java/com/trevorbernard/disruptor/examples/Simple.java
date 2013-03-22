@@ -15,7 +15,7 @@ public class Simple {
         // Preallocate RingBuffer with 1024 ValueEvents
         Disruptor<ValueEvent> disruptor = new Disruptor<ValueEvent>(ValueEvent.EVENT_FACTORY, 1024, exec);
         final EventHandler<ValueEvent> handler = new EventHandler<ValueEvent>() {
-        	// event is recycled sometime after the method returns so you must copy out the data it holds
+            // event will eventually be recycled by the Disruptor after it wraps
             public void onEvent(final ValueEvent event, final long sequence, final boolean endOfBatch) throws Exception {
                 System.out.println("Sequence: " + sequence);
                 System.out.println("ValueEvent: " + event.getValue());
@@ -25,8 +25,8 @@ public class Simple {
         disruptor.handleEventsWith(handler);
         RingBuffer<ValueEvent> ringBuffer = disruptor.start();
 
-        for(long i = 10; i < 2000; i++) {
-			String uuid = UUID.randomUUID().toString();
+        for (long i = 10; i < 2000; i++) {
+            String uuid = UUID.randomUUID().toString();
             // Two phase commit. Grab one of the 1024 slots
             long seq = ringBuffer.next();
             ValueEvent valueEvent = ringBuffer.get(seq);
